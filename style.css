@@ -66,8 +66,7 @@ button {
 }
 
 .arena {
-  --tug-offset:0px;
-  --ropeY:56%;
+  --ropeY:84px;
   text-align:center;
   position:relative;
   background:#ffffff;
@@ -101,11 +100,8 @@ button {
 }
 
 .ropeTrack {
-  position:relative;
-  height:130px;
-  margin:26px 0 20px;
-  transform:translateX(var(--tug-offset));
-  transition:transform 0.25s ease;
+  position:absolute;
+  inset:0;
 }
 
 .ropeLine {
@@ -131,6 +127,20 @@ button {
   transform:translate(-50%,-20%);
   transition:top 0.2s;
   z-index:3;
+}
+
+.tugScene {
+  position:relative;
+  height:170px;
+  margin:20px 0;
+}
+
+.arenaOffset {
+  position:relative;
+  width:100%;
+  height:100%;
+  transition:transform 0.25s ease;
+  will-change:transform;
 }
 
 .midPullers {
@@ -349,15 +359,17 @@ button {
 
 
 .pullers {
+  position:absolute;
+  top:calc(var(--ropeY) - 74px);
+  left:0;
+  right:0;
   display:flex;
   justify-content:center;
   align-items:center;
-  margin-top:0;
+  margin:0;
   padding:0;
   gap:110px;
   pointer-events:none;
-  transform:translateY(-2px) translateX(var(--tug-offset));
-  transition:transform 0.25s ease;
 }
 
 .team {
@@ -372,18 +384,18 @@ button {
 
 
 .player-wrap {
-  width:92px;
-  height:148px;
+  width:120px;
+  height:120px;
 }
 
 .player-sprite {
-  width:92px;
-  height:148px;
+  width:120px;
+  height:120px;
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
   filter:drop-shadow(0 4px 4px rgba(30, 41, 59, 0.22));
-  transform-origin:50% 70%;
+  transform-origin:50% 62%;
 }
 
 .teamScore.blue,
@@ -410,20 +422,12 @@ button {
 
 @keyframes effortBounce {
   0%,
-  100% { transform:translateY(0) rotate(var(--rear-lean)); }
-  50% { transform:translateY(-2px) translateX(var(--rear-shift)) rotate(calc(var(--rear-lean) + var(--rear-boost))); }
+  100% { transform:translateY(0) rotate(-1deg); }
+  50% { transform:translateY(2px) rotate(1deg); }
 }
 
-.teamLeft {
-  --rear-lean:16deg;
-  --rear-shift:-3px;
-  --rear-boost:3deg;
-}
-
-.teamRight {
-  --rear-lean:-16deg;
-  --rear-shift:3px;
-  --rear-boost:-3deg;
+.team .player-wrap:nth-child(2) .player-sprite {
+  animation-delay:0.12s;
 }
 
 
