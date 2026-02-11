@@ -50,10 +50,8 @@ button {
   border-radius:12px;
 }
 
-.doubleKeypads {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.keypadWrap {
+  max-width: 240px;
 }
 
 .keypad {
