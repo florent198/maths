@@ -1,5 +1,7 @@
 const q1El = document.getElementById("q1");
 const q2El = document.getElementById("q2");
+const a1El = document.getElementById("a1");
+const a2El = document.getElementById("a2");
 const score1El = document.getElementById("score1");
 const score2El = document.getElementById("score2");
 const timerEl = document.getElementById("timer");
@@ -10,113 +12,190 @@ const resetBtn = document.getElementById("resetBtn");
 const overlay = document.getElementById("countdownOverlay");
 const overlayText = document.getElementById("countdownText");
 
-let score1=0, score2=0;
-let tug=0;
-let gameStarted=false;
+const answerFields = {
+  1: a1El,
+  2: a2El,
+};
+
+const keypadBuffers = {
+  1: "",
+  2: "",
+};
+
+let score1 = 0,
+  score2 = 0;
+let tug = 0;
+let gameStarted = false;
 let timerInterval;
-let currentAnswer1=0, currentAnswer2=0;
+let currentAnswer1 = 0,
+  currentAnswer2 = 0;
 
-function randomInt(max){ return Math.floor(Math.random()*max); }
+function randomInt(max) {
+  return Math.floor(Math.random() * max);
+}
 
-function newRound(){
-  let a=randomInt(20), b=randomInt(20);
-  let c=randomInt(20), d=randomInt(20);
+function refreshAnswerField(team) {
+  answerFields[team].value = keypadBuffers[team];
+}
 
-  currentAnswer1=a+b;
-  currentAnswer2=c+d;
+function clearBuffers() {
+  keypadBuffers[1] = "";
+  keypadBuffers[2] = "";
+  refreshAnswerField(1);
+  refreshAnswerField(2);
+}
 
-  q1El.textContent=`${a} + ${b} = ?`;
-  q2El.textContent=`${c} + ${d} = ?`;
+function newRound() {
+  let a = randomInt(20),
+    b = randomInt(20);
+  let c = randomInt(20),
+    d = randomInt(20);
 
-  if(document.getElementById("timedMode").checked){
+  currentAnswer1 = a + b;
+  currentAnswer2 = c + d;
+
+  q1El.textContent = `${a} + ${b} = ?`;
+  q2El.textContent = `${c} + ${d} = ?`;
+
+  clearBuffers();
+
+  if (document.getElementById("timedMode").checked) {
     startTimer();
   }
 }
 
-function startTimer(){
+function startTimer() {
   clearInterval(timerInterval);
-  let time=parseInt(document.getElementById("roundSeconds").value);
-  timerEl.textContent=time;
+  let time = parseInt(document.getElementById("roundSeconds").value);
+  timerEl.textContent = time;
 
-  timerInterval=setInterval(()=>{
+  timerInterval = setInterval(() => {
     time--;
-    timerEl.textContent=time;
-    if(time<=0){
+    timerEl.textContent = time;
+    if (time <= 0) {
       clearInterval(timerInterval);
       newRound();
     }
-  },1000);
+  }, 1000);
 }
 
-function updateRope(){
-  let pos=50+(tug*8);
-  pos=Math.max(10,Math.min(90,pos));
-  knotEl.style.left=pos+"%";
+function updateRope() {
+  let pos = 50 + tug * 8;
+  pos = Math.max(10, Math.min(90, pos));
+  knotEl.style.left = pos + "%";
 }
 
-function checkAnswer(team,value){
-  if(!gameStarted) return;
+function checkAnswer(team, value) {
+  if (!gameStarted || Number.isNaN(value)) return;
 
-  if(team===1 && value===currentAnswer1){
-    score1++; tug--;
+  if (team === 1 && value === currentAnswer1) {
+    score1++;
+    tug--;
   }
-  if(team===2 && value===currentAnswer2){
-    score2++; tug++;
+  if (team === 2 && value === currentAnswer2) {
+    score2++;
+    tug++;
   }
 
-  score1El.textContent=score1;
-  score2El.textContent=score2;
+  score1El.textContent = score1;
+  score2El.textContent = score2;
 
   updateRope();
   newRound();
 }
 
-function buildKeypads(){
-  document.querySelectorAll(".keypad").forEach(kp=>{
-    const team=parseInt(kp.dataset.team);
-    let buffer="";
+function handleKeypadPress(team, key) {
+  if (!gameStarted) return;
 
-    ["1","2","3","4","5","6","7","8","9","0","DEL","OK"].forEach(key=>{
-      const btn=document.createElement("button");
-      btn.textContent=key;
-      btn.onclick=()=>{
-        if(!gameStarted) return;
+  if (key === "DEL") {
+    keypadBuffers[team] = keypadBuffers[team].slice(0, -1);
+    refreshAnswerField(team);
+    return;
+  }
 
-        if(key==="DEL"){ buffer=buffer.slice(0,-1); return; }
-        if(key==="OK"){ checkAnswer(team,parseInt(buffer)); buffer=""; return; }
-        buffer+=key;
-      };
-      kp.appendChild(btn);
-    });
+  if (key === "OK") {
+    checkAnswer(team, parseInt(keypadBuffers[team], 10));
+    keypadBuffers[team] = "";
+    refreshAnswerField(team);
+    return;
+  }
+
+  keypadBuffers[team] += key;
+  refreshAnswerField(team);
+}
+
+function bindTap(btn, handler) {
+  let touchHandled = false;
+
+  btn.addEventListener(
+    "touchstart",
+    (event) => {
+      event.preventDefault();
+      touchHandled = true;
+      handler();
+      setTimeout(() => {
+        touchHandled = false;
+      }, 300);
+    },
+    { passive: false }
+  );
+
+  btn.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (touchHandled) return;
+    handler();
   });
 }
 
-async function countdown(){
+function buildKeypads() {
+  document.querySelectorAll(".keypad").forEach((kp) => {
+    const team = parseInt(kp.dataset.team, 10);
+
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "DEL", "OK"].forEach(
+      (key) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = key;
+        bindTap(btn, () => handleKeypadPress(team, key));
+        kp.appendChild(btn);
+      }
+    );
+  });
+}
+
+async function countdown() {
   overlay.classList.add("show");
-  for(let txt of ["3","2","1","GO!"]){
-    overlayText.textContent=txt;
-    overlayText.style.animation="none";
+  for (let txt of ["3", "2", "1", "GO!"]) {
+    overlayText.textContent = txt;
+    overlayText.style.animation = "none";
     void overlayText.offsetWidth;
-    overlayText.style.animation="pop 0.7s";
-    await new Promise(r=>setTimeout(r,700));
+    overlayText.style.animation = "pop 0.7s";
+    await new Promise((r) => setTimeout(r, 700));
   }
   overlay.classList.remove("show");
 }
 
-startBtn.onclick=async ()=>{
-  if(gameStarted) return;
+startBtn.onclick = async () => {
+  if (gameStarted) return;
   await countdown();
-  gameStarted=true;
+  gameStarted = true;
+  winnerEl.textContent = "";
   newRound();
 };
 
-resetBtn.onclick=()=>{
-  gameStarted=false;
-  score1=0; score2=0; tug=0;
-  score1El.textContent=0;
-  score2El.textContent=0;
+resetBtn.onclick = () => {
+  gameStarted = false;
+  clearInterval(timerInterval);
+  score1 = 0;
+  score2 = 0;
+  tug = 0;
+  score1El.textContent = 0;
+  score2El.textContent = 0;
+  timerEl.textContent = document.getElementById("roundSeconds").value;
+  clearBuffers();
   updateRope();
 };
 
 buildKeypads();
+clearBuffers();
 updateRope();
