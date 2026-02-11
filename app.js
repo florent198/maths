@@ -74,7 +74,6 @@ function checkAnswer(team,value){
 function buildKeypads(){
   document.querySelectorAll(".keypad").forEach(kp=>{
     const team=parseInt(kp.dataset.team);
-    const player=parseInt(kp.dataset.player);
     let buffer="";
 
     ["1","2","3","4","5","6","7","8","9","0","DEL","OK"].forEach(key=>{
