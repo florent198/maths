@@ -7,124 +7,120 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="title">TUG OF WAR: MATHEMATICS</div>
-    <div class="hud">
-      <div class="teamScore blue">
-        Team 1: <span id="score1">0</span>
-      </div>
 
-      <div class="level">
-        Niveau: <span id="level">1</span>
-        <div class="modeRow">
-          <label class="modeToggle">
-            <input type="checkbox" id="timedMode" checked />
-            <span>Timer manche</span>
-          </label>
+<header class="header">
+  <div class="title">TUG OF WAR: MATHEMATICS</div>
 
-          <select id="roundSeconds" class="seconds">
-            <option value="10">10s</option>
-            <option value="15" selected>15s</option>
-            <option value="20">20s</option>
-            <option value="30">30s</option>
-          </select>
+  <div class="hud">
+    <div class="teamScore blue">Team 1: <span id="score1">0</span></div>
+
+    <div class="level">
+      Niveau: <span id="level">1</span>
+      <div class="modeRow">
+        <label class="modeToggle">
+          <input type="checkbox" id="timedMode" checked />
+          <span>Timer manche</span>
+        </label>
+
+        <select id="roundSeconds" class="seconds">
+          <option value="10">10s</option>
+          <option value="15" selected>15s</option>
+          <option value="20">20s</option>
+          <option value="30">30s</option>
+        </select>
+
+        <div class="controls">
+          <button id="startBtn" class="start">Lancer la partie</button>
+          <button id="resetBtn" class="reset">Reset</button>
         </div>
       </div>
-
-      <div class="teamScore red">
-        Team 2: <span id="score2">0</span>
-      </div>
-
-      <button id="resetBtn" class="reset">Reset</button>
     </div>
-  </header>
 
-  <main class="grid">
-    <!-- TEAM 1 -->
-    <section class="panel blue">
-      <div class="panelHead">
-        <div class="teamName">Team 1</div>
-        <div class="streak">Série: <span id="streak1">0</span></div>
+    <div class="teamScore red">Team 2: <span id="score2">0</span></div>
+  </div>
+</header>
+
+<main class="grid">
+
+  <!-- TEAM 1 -->
+  <section class="panel blue">
+    <div class="panelHead">
+      <div class="teamName">Team 1</div>
+      <div class="streak">Série: <span id="streak1">0</span></div>
+    </div>
+
+    <div class="question" id="q1">5 + 5 = ?</div>
+    <input id="a1" class="answer" inputmode="numeric" placeholder="0" />
+
+    <div class="doubleKeypads">
+      <div class="keypad" data-team="1" data-player="1"></div>
+      <div class="keypad" data-team="1" data-player="2"></div>
+    </div>
+
+    <div class="msg" id="m1"></div>
+  </section>
+
+  <!-- ARENA -->
+  <section class="arena">
+    <div class="topInfo">
+      <div>Team 1</div>
+      <div class="timer">
+        <span id="timerLabel">Manche</span> :
+        <span id="timer">15</span>s
+      </div>
+      <div>Team 2</div>
+    </div>
+
+    <div class="centerLine"></div>
+
+    <div class="tugScene">
+      <div class="ropeTrack">
+        <div class="ropeLine" id="ropeLine"></div>
+        <div class="knot" id="knot"></div>
       </div>
 
-      <div class="question" id="q1">5 + 5 = ?</div>
-
-      <input
-        id="a1"
-        class="answer"
-        inputmode="numeric"
-        placeholder="0"
-      />
-
-      <div class="keypad" data-team="1"></div>
-
-      <div class="msg" id="m1"></div>
-    </section>
-
-    <!-- ARENA -->
-    <section class="arena">
-      <div class="topInfo">
-        <div>Team 1</div>
-
-        <div class="timer">
-          <span id="timerLabel">Manche</span> :
-          <span id="timer">15</span>s
+      <div class="pullers">
+        <div class="team teamLeft" id="teamLeft">
+          <div class="puller blueP"></div>
+          <div class="puller blueP"></div>
         </div>
 
-        <div>Team 2</div>
-      </div>
-
-      <div class="centerLine"></div>
-
-      <div class="tugScene">
-        <!-- Corde -->
-        <div class="ropeTrack">
-          <div class="ropeLine" id="ropeLine"></div>
-          <div class="knot" id="knot"></div>
-        </div>
-
-        <!-- Personnages -->
-        <div class="pullers">
-          <div class="team teamLeft" id="teamLeft">
-            <div class="puller blueP"></div>
-            <div class="puller blueP"></div>
-          </div>
-
-          <div class="team teamRight" id="teamRight">
-            <div class="puller orangeP"></div>
-            <div class="puller orangeP"></div>
-          </div>
+        <div class="team teamRight" id="teamRight">
+          <div class="puller orangeP"></div>
+          <div class="puller orangeP"></div>
         </div>
       </div>
+    </div>
 
-      <div class="winner" id="winner"></div>
-      <div class="hint">
-        Répondez vite : une bonne réponse tire la corde.
-      </div>
-    </section>
+    <div class="winner" id="winner"></div>
+    <div class="hint">Le premier joueur correct gagne la manche !</div>
+  </section>
 
-    <!-- TEAM 2 -->
-    <section class="panel red">
-      <div class="panelHead">
-        <div class="teamName">Team 2</div>
-        <div class="streak">Série: <span id="streak2">0</span></div>
-      </div>
+  <!-- TEAM 2 -->
+  <section class="panel red">
+    <div class="panelHead">
+      <div class="teamName">Team 2</div>
+      <div class="streak">Série: <span id="streak2">0</span></div>
+    </div>
 
-      <div class="question" id="q2">6 + 8 = ?</div>
+    <div class="question" id="q2">6 + 8 = ?</div>
+    <input id="a2" class="answer" inputmode="numeric" placeholder="0" />
 
-      <input
-        id="a2"
-        class="answer"
-        inputmode="numeric"
-        placeholder="0"
-      />
+    <div class="doubleKeypads">
+      <div class="keypad" data-team="2" data-player="1"></div>
+      <div class="keypad" data-team="2" data-player="2"></div>
+    </div>
 
-      <div class="keypad" data-team="2"></div>
+    <div class="msg" id="m2"></div>
+  </section>
 
-      <div class="msg" id="m2"></div>
-    </section>
-  </main>
+</main>
 
-  <script src="app.js"></script>
+<!-- COUNTDOWN OVERLAY -->
+<div id="countdownOverlay" class="countdownOverlay">
+  <div id="countdownText" class="countdownText">3</div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
