@@ -46,6 +46,8 @@ function clearBuffers() {
 }
 
 function newRound() {
+  if (!gameStarted) return;
+
   let a = randomInt(20),
     b = randomInt(20);
   let c = randomInt(20),
@@ -58,23 +60,38 @@ function newRound() {
   q2El.textContent = `${c} + ${d} = ?`;
 
   clearBuffers();
+}
 
-  if (document.getElementById("timedMode").checked) {
-    startTimer();
+function getWinnerText() {
+  if (score1 > score2) {
+    return "🏆 Team 1 gagne avec le plus de points !";
   }
+
+  if (score2 > score1) {
+    return "🏆 Team 2 gagne avec le plus de points !";
+  }
+
+  return "🤝 Égalité parfaite !";
+}
+
+function endGame() {
+  gameStarted = false;
+  clearInterval(timerInterval);
+  winnerEl.textContent = getWinnerText();
 }
 
 function startTimer() {
   clearInterval(timerInterval);
-  let time = parseInt(document.getElementById("roundSeconds").value);
+  let time = parseInt(document.getElementById("roundSeconds").value, 10);
   timerEl.textContent = time;
 
   timerInterval = setInterval(() => {
+    if (!gameStarted) return;
+
     time--;
     timerEl.textContent = time;
     if (time <= 0) {
-      clearInterval(timerInterval);
-      newRound();
+      endGame();
     }
   }, 1000);
 }
@@ -189,9 +206,19 @@ async function countdown() {
 startBtn.onclick = async () => {
   if (gameStarted) return;
   await countdown();
-  gameStarted = true;
+  score1 = 0;
+  score2 = 0;
+  tug = 0;
+  score1El.textContent = 0;
+  score2El.textContent = 0;
   winnerEl.textContent = "";
+  updateRope();
+  gameStarted = true;
   newRound();
+
+  if (document.getElementById("timedMode").checked) {
+    startTimer();
+  }
 };
 
 resetBtn.onclick = () => {
@@ -203,6 +230,7 @@ resetBtn.onclick = () => {
   score1El.textContent = 0;
   score2El.textContent = 0;
   timerEl.textContent = document.getElementById("roundSeconds").value;
+  winnerEl.textContent = "";
   clearBuffers();
   updateRope();
 };
@@ -210,3 +238,4 @@ resetBtn.onclick = () => {
 buildKeypads();
 clearBuffers();
 updateRope();
+timerEl.textContent = document.getElementById("roundSeconds").value;
