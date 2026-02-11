@@ -346,10 +346,11 @@ button {
 
 .pullers {
   display:flex;
-  justify-content:space-between;
+  justify-content:center;
   align-items:center;
   margin-top:0;
-  padding:0 38px;
+  padding:0;
+  gap:110px;
   pointer-events:none;
 }
 
@@ -365,14 +366,14 @@ button {
 
 
 .player {
-  width:56px;
-  height:92px;
+  width:92px;
+  height:148px;
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
   filter:drop-shadow(0 4px 4px rgba(30, 41, 59, 0.22));
   transform-origin:50% 70%;
-  --rear-scale:1;
+  --rear-scale:-1;
 }
 
 .blue {
@@ -385,7 +386,7 @@ button {
 
 .team-right .player,
 .teamRight .player {
-  --rear-scale:-1;
+  --rear-scale:1;
 }
 
 .team.is-pulling .player {
