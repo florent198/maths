@@ -67,6 +67,12 @@ button {
 
 .arena {
   --ropeY:84px;
+  --playerSize:120px;
+  --teamGap:10px;
+  --safePadding:26px;
+  --centerOffset:156px;
+  --gameX:0px;
+  --handAdjustY:4px;
   text-align:center;
   position:relative;
   background:#ffffff;
@@ -102,6 +108,8 @@ button {
 .ropeTrack {
   position:absolute;
   inset:0;
+  transform:translateX(var(--gameX));
+  transition:transform 0.25s ease;
 }
 
 .ropeLine {
@@ -133,14 +141,15 @@ button {
   position:relative;
   height:170px;
   margin:20px 0;
+  overflow:hidden;
+  border-radius:12px;
 }
 
 .arenaOffset {
   position:relative;
   width:100%;
   height:100%;
-  transition:transform 0.25s ease;
-  will-change:transform;
+  --gameX:0px;
 }
 
 .midPullers {
@@ -360,21 +369,30 @@ button {
 
 .pullers {
   position:absolute;
-  top:calc(var(--ropeY) - 74px);
-  left:0;
-  right:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin:0;
-  padding:0;
-  gap:110px;
+  inset:0;
   pointer-events:none;
 }
 
-.team {
+.tugTeam {
+  --baseX:0px;
+  position:absolute;
+  top:calc(var(--ropeY) - (var(--playerSize) * 0.58) + var(--handAdjustY));
+  left:50%;
   display:flex;
-  gap:8px;
+  gap:var(--teamGap);
+  transform:translateX(calc(var(--baseX) + var(--gameX)));
+  transition:transform 0.25s ease, filter 0.2s ease;
+}
+
+.tugLeft {
+  --baseX:calc(-1 * (var(--centerOffset) + var(--safePadding)));
+}
+
+.tugRight {
+  --baseX:calc(var(--centerOffset) + var(--safePadding));
+}
+
+.team {
   transition:filter 0.2s ease;
 }
 
@@ -383,19 +401,22 @@ button {
 }
 
 
+.tugPlayerWrap,
 .player-wrap {
-  width:120px;
-  height:120px;
+  width:var(--playerSize);
+  height:var(--playerSize);
 }
 
+.tugPlayerSprite,
 .player-sprite {
-  width:120px;
-  height:120px;
+  width:var(--playerSize);
+  height:var(--playerSize);
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
   filter:drop-shadow(0 4px 4px rgba(30, 41, 59, 0.22));
-  transform-origin:50% 62%;
+  transform-origin:50% 58%;
+  transform:translateY(1px);
 }
 
 .teamScore.blue,
@@ -416,6 +437,7 @@ button {
   background-image:url("./joueurrouge.png");
 }
 
+.team.is-pulling .tugPlayerSprite,
 .team.is-pulling .player-sprite {
   animation:effortBounce 0.45s ease-in-out infinite;
 }
@@ -426,6 +448,7 @@ button {
   50% { transform:translateY(2px) rotate(1deg); }
 }
 
+.team .tugPlayerWrap:nth-child(2) .tugPlayerSprite,
 .team .player-wrap:nth-child(2) .player-sprite {
   animation-delay:0.12s;
 }

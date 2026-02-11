@@ -100,11 +100,14 @@ function startTimer() {
   }, 1000);
 }
 
+function renderTug(offsetPx) {
+  if (!arenaOffsetEl) return;
+  arenaOffsetEl.style.setProperty("--gameX", `${offsetPx}px`);
+}
+
 function updateRope() {
   const tugOffset = Math.max(-72, Math.min(72, tug * 8));
-  if (arenaOffsetEl) {
-    arenaOffsetEl.style.transform = `translateX(${tugOffset}px)`;
-  }
+  renderTug(tugOffset);
   knotEl.style.left = "50%";
   updatePullersState();
 }
