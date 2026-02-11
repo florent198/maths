@@ -13,6 +13,7 @@ const overlay = document.getElementById("countdownOverlay");
 const overlayText = document.getElementById("countdownText");
 const teamLeftEl = document.getElementById("teamLeft");
 const teamRightEl = document.getElementById("teamRight");
+const arenaEl = document.getElementById("arena");
 
 const answerFields = {
   1: a1El,
@@ -100,23 +101,16 @@ function startTimer() {
 }
 
 function updateRope() {
-  let pos = 50 + tug * 8;
-  pos = Math.max(10, Math.min(90, pos));
-  knotEl.style.left = pos + "%";
+  const tugOffset = Math.max(-72, Math.min(72, tug * 8));
+  if (arenaEl) {
+    arenaEl.style.setProperty("--tug-offset", `${tugOffset}px`);
+  }
+  knotEl.style.left = "50%";
   updatePullersState();
 }
 
 function updateTeamProgress() {
   if (!teamLeftEl || !teamRightEl) return;
-
-  const maxProgress = 68;
-  const scoreStep = 4;
-  const tugShift = Math.max(-18, Math.min(18, tug * 3));
-  const leftProgress = Math.min(maxProgress, score1 * scoreStep);
-  const rightProgress = Math.min(maxProgress, score2 * scoreStep);
-
-  teamLeftEl.style.transform = `translateX(${leftProgress + tugShift}px)`;
-  teamRightEl.style.transform = `translateX(${-rightProgress + tugShift}px)`;
 
   teamLeftEl.classList.toggle("winning", tug < 0);
   teamRightEl.classList.toggle("winning", tug > 0);
