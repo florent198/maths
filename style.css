@@ -66,6 +66,8 @@ button {
 }
 
 .arena {
+  --tug-offset:0px;
+  --ropeY:56%;
   text-align:center;
   position:relative;
   background:#ffffff;
@@ -102,6 +104,8 @@ button {
   position:relative;
   height:130px;
   margin:26px 0 20px;
+  transform:translateX(var(--tug-offset));
+  transition:transform 0.25s ease;
 }
 
 .ropeLine {
@@ -111,7 +115,7 @@ button {
   height:5px;
   background:#111827;
   border-radius:999px;
-  top:50%;
+  top:var(--ropeY);
   transform:translateY(-50%);
 }
 
@@ -122,10 +126,10 @@ button {
   border-left:10px solid transparent;
   border-right:10px solid transparent;
   border-top:18px solid #ef4444;
-  top:50%;
+  top:var(--ropeY);
   left:50%;
   transform:translate(-50%,-20%);
-  transition:left 0.2s;
+  transition:top 0.2s;
   z-index:3;
 }
 
@@ -352,12 +356,14 @@ button {
   padding:0;
   gap:110px;
   pointer-events:none;
+  transform:translateY(-2px) translateX(var(--tug-offset));
+  transition:transform 0.25s ease;
 }
 
 .team {
   display:flex;
   gap:8px;
-  transition:transform 0.25s ease, filter 0.2s ease;
+  transition:filter 0.2s ease;
 }
 
 .team.winning {
@@ -365,7 +371,12 @@ button {
 }
 
 
-.player {
+.player-wrap {
+  width:92px;
+  height:148px;
+}
+
+.player-sprite {
   width:92px;
   height:148px;
   background-size:contain;
@@ -373,7 +384,6 @@ button {
   background-position:center;
   filter:drop-shadow(0 4px 4px rgba(30, 41, 59, 0.22));
   transform-origin:50% 70%;
-  --rear-scale:-1;
 }
 
 .blue {
@@ -381,22 +391,17 @@ button {
 }
 
 .red {
-  background-image:url("./jouerrouge.png");
+  background-image:url("./joueurrouge.png");
 }
 
-.team-right .player,
-.teamRight .player {
-  --rear-scale:1;
+.team.is-pulling .player-sprite {
+  animation:effortBounce 0.45s ease-in-out infinite;
 }
 
-.team.is-pulling .player {
-  animation:rearPull 0.45s ease-in-out infinite;
-}
-
-@keyframes rearPull {
+@keyframes effortBounce {
   0%,
-  100% { transform:scaleX(var(--rear-scale)) translateY(0) rotate(var(--rear-lean)); }
-  50% { transform:scaleX(var(--rear-scale)) translateY(-3px) translateX(var(--rear-shift)) rotate(calc(var(--rear-lean) + var(--rear-boost))); }
+  100% { transform:translateY(0) rotate(var(--rear-lean)); }
+  50% { transform:translateY(-2px) translateX(var(--rear-shift)) rotate(calc(var(--rear-lean) + var(--rear-boost))); }
 }
 
 .teamLeft {
