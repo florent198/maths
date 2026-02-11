@@ -347,7 +347,7 @@ button {
 .pullers {
   display:flex;
   justify-content:space-between;
-  align-items:flex-end;
+  align-items:center;
   margin-top:0;
   padding:0 38px;
   pointer-events:none;
@@ -355,7 +355,7 @@ button {
 
 .team {
   display:flex;
-  gap:0;
+  gap:8px;
   transition:transform 0.25s ease, filter 0.2s ease;
 }
 
@@ -364,75 +364,38 @@ button {
 }
 
 
-.puller {
-  position:relative;
-  width:50px;
+.player {
+  width:56px;
   height:92px;
-  border:none;
-  box-shadow:none;
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  filter:drop-shadow(0 4px 4px rgba(30, 41, 59, 0.22));
   transform-origin:50% 70%;
+  --rear-scale:1;
 }
 
-.puller::before {
-  content:"";
-  position:absolute;
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  border:2px solid #111827;
-  background:#f8e8d0;
-  top:4px;
-  left:50%;
-  transform:translateX(-50%);
+.blue {
+  background-image:url("./joueurbleu.png");
 }
 
-.puller::after {
-  content:"";
-  position:absolute;
-  width:28px;
-  height:40px;
-  border:2px solid #111827;
-  border-radius:12px;
-  top:22px;
-  left:50%;
-  transform:translateX(-50%);
-  background:currentColor;
+.red {
+  background-image:url("./jouerrouge.png");
 }
 
-.teamLeft .puller,
-.teamRight .puller {
-  color:inherit;
+.team-right .player,
+.teamRight .player {
+  --rear-scale:-1;
 }
 
-.teamLeft .puller {
-  color:#2563eb;
-}
-
-.teamRight .puller {
-  color:#f97316;
-}
-
-.teamLeft .puller {
-  transform:rotate(16deg);
-}
-
-.teamRight .puller {
-  transform:rotate(-16deg);
-}
-
-.puller .limb,
-.puller .limbBack {
-  display:none;
-}
-
-.team.is-pulling .puller {
+.team.is-pulling .player {
   animation:rearPull 0.45s ease-in-out infinite;
 }
 
 @keyframes rearPull {
   0%,
-  100% { transform:translateY(0) rotate(var(--rear-lean)); }
-  50% { transform:translateY(-3px) translateX(var(--rear-shift)) rotate(calc(var(--rear-lean) + var(--rear-boost))); }
+  100% { transform:scaleX(var(--rear-scale)) translateY(0) rotate(var(--rear-lean)); }
+  50% { transform:scaleX(var(--rear-scale)) translateY(-3px) translateX(var(--rear-shift)) rotate(calc(var(--rear-lean) + var(--rear-boost))); }
 }
 
 .teamLeft {
@@ -447,20 +410,6 @@ button {
   --rear-boost:-3deg;
 }
 
-
-.players {
-  display:flex;
-  justify-content:space-between;
-}
-
-.player {
-  width:40px;
-  height:60px;
-  border-radius:10px;
-}
-
-.blueP { color:#2563eb; }
-.orangeP { color:#f97316; }
 
 .countdownOverlay {
   position:fixed;

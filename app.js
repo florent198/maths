@@ -11,9 +11,6 @@ const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const overlay = document.getElementById("countdownOverlay");
 const overlayText = document.getElementById("countdownText");
-const midPullersEl = document.getElementById("midPullers");
-const midPersonLeftEl = document.getElementById("midPersonLeft");
-const midPersonRightEl = document.getElementById("midPersonRight");
 const teamLeftEl = document.getElementById("teamLeft");
 const teamRightEl = document.getElementById("teamRight");
 
@@ -128,17 +125,6 @@ function updateTeamProgress() {
 }
 
 function updatePullersState() {
-  if (!midPullersEl || !midPersonLeftEl || !midPersonRightEl) return;
-
-  const direction = tug === 0 ? "center" : tug > 0 ? "right" : "left";
-  midPullersEl.dataset.pull = direction;
-
-  midPersonLeftEl.classList.toggle("is-pulling", gameStarted);
-  midPersonRightEl.classList.toggle("is-pulling", gameStarted);
-
-  midPersonLeftEl.classList.toggle("winning", tug < 0);
-  midPersonRightEl.classList.toggle("winning", tug > 0);
-
   updateTeamProgress();
 }
 
