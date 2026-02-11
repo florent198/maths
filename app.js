@@ -114,13 +114,24 @@ function handleKeypadPress(team, key) {
   }
 
   if (key === "OK") {
-    checkAnswer(team, parseInt(keypadBuffers[team], 10));
-    keypadBuffers[team] = "";
-    refreshAnswerField(team);
+    submitBufferedAnswer(team);
     return;
   }
 
   keypadBuffers[team] += key;
+  refreshAnswerField(team);
+
+  const bufferedValue = parseInt(keypadBuffers[team], 10);
+  const expectedAnswer = team === 1 ? currentAnswer1 : currentAnswer2;
+
+  if (bufferedValue === expectedAnswer) {
+    submitBufferedAnswer(team);
+  }
+}
+
+function submitBufferedAnswer(team) {
+  checkAnswer(team, parseInt(keypadBuffers[team], 10));
+  keypadBuffers[team] = "";
   refreshAnswerField(team);
 }
 
