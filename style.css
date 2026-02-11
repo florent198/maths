@@ -72,8 +72,8 @@ button {
 
 .ropeTrack {
   position:relative;
-  height:20px;
-  margin:40px 0;
+  height:120px;
+  margin:24px 0;
 }
 
 .ropeLine {
@@ -95,7 +95,108 @@ button {
   left:50%;
   transform:translate(-50%,-50%);
   transition:left 0.2s;
+  z-index:3;
 }
+
+.midPullers {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:56px;
+  pointer-events:none;
+  z-index:2;
+}
+
+.midPerson {
+  position:relative;
+  width:38px;
+  height:74px;
+  transform:translateY(22px);
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,0.25));
+}
+
+.midPerson .head {
+  position:absolute;
+  top:0;
+  left:50%;
+  width:15px;
+  height:15px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#f8e8d0;
+  border:2px solid #171717;
+}
+
+.midPerson .body {
+  position:absolute;
+  top:16px;
+  left:50%;
+  width:24px;
+  height:32px;
+  transform:translateX(-50%);
+  border-radius:9px;
+  border:2px solid #171717;
+  background:currentColor;
+}
+
+.midPerson .arm,
+.midPerson .leg {
+  position:absolute;
+  display:block;
+  background:#171717;
+  border-radius:999px;
+  transform-origin:top center;
+}
+
+.midPerson .arm {
+  top:25px;
+  width:4px;
+  height:24px;
+}
+
+.midPerson .armBack {
+  left:7px;
+}
+
+.midPerson .armFront {
+  right:7px;
+}
+
+.midPerson .leg {
+  top:46px;
+  width:5px;
+  height:26px;
+}
+
+.midPerson .legBack {
+  left:13px;
+}
+
+.midPerson .legFront {
+  right:13px;
+}
+
+.midPerson.left {
+  color:#2563eb;
+  transform:translateY(22px) rotate(11deg);
+}
+
+.midPerson.right {
+  color:#f97316;
+  transform:translateY(22px) rotate(-11deg);
+}
+
+.midPerson.left .armBack { transform:rotate(35deg); }
+.midPerson.left .armFront { transform:rotate(-55deg); }
+.midPerson.left .legBack { transform:rotate(24deg); }
+.midPerson.left .legFront { transform:rotate(-18deg); }
+
+.midPerson.right .armBack { transform:rotate(-35deg); }
+.midPerson.right .armFront { transform:rotate(55deg); }
+.midPerson.right .legBack { transform:rotate(-24deg); }
+.midPerson.right .legFront { transform:rotate(18deg); }
 
 .players {
   display:flex;
