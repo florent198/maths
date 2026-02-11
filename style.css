@@ -386,11 +386,21 @@ button {
   transform-origin:50% 70%;
 }
 
-.blue {
+.teamScore.blue,
+.panel.blue {
+  color:#2563eb;
+}
+
+.teamScore.red,
+.panel.red {
+  color:#dc2626;
+}
+
+.player-blue {
   background-image:url("./joueurbleu.png");
 }
 
-.red {
+.player-red {
   background-image:url("./joueurrouge.png");
 }
 
