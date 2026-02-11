@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tug of War - Maths</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>TUG OF WAR: MATHS</h1>
+    <div class="topbar">
+      <div>Team 1: <span id="score1">0</span></div>
+      <div>Team 2: <span id="score2">0</span></div>
+      <button id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="panel blue">
+      <h2>Team 1</h2>
+      <div class="question" id="q1">5 + 5 = ?</div>
+      <input id="a1" inputmode="numeric" placeholder="Réponse…" />
+      <button id="ok1">OK</button>
+      <div class="msg" id="m1"></div>
+    </section>
+
+    <section class="arena">
+      <div class="line"></div>
+      <div class="rope">
+        <div class="marker" id="marker"></div>
+      </div>
+      <div class="winner" id="winner"></div>
+    </section>
+
+    <section class="panel red">
+      <h2>Team 2</h2>
+      <div class="question" id="q2">6 + 8 = ?</div>
+      <input id="a2" inputmode="numeric" placeholder="Réponse…" />
+      <button id="ok2">OK</button>
+      <div class="msg" id="m2"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
