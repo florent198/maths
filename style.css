@@ -1,66 +1,146 @@
-* { box-sizing: border-box; font-family: system-ui, Arial, sans-serif; }
-body { margin: 0; background: #f5f7fb; color: #111; }
-header { padding: 16px; background: #fff; border-bottom: 1px solid #e6e8ef; }
-h1 { margin: 0 0 10px; font-size: 20px; letter-spacing: .5px; }
-.topbar { display: flex; gap: 14px; align-items: center; }
-.topbar button { margin-left: auto; padding: 8px 10px; cursor: pointer; }
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f4f6fb;
+}
+
+.header {
+  padding:15px;
+  background:white;
+  border-bottom:1px solid #ddd;
+}
+
+.title {
+  font-weight:900;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.hud {
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+}
+
+.centerControls {
+  text-align:center;
+}
+
+button {
+  padding:8px 14px;
+  margin:4px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.start { background:#16a34a; color:white; }
+.reset { background:#ef4444; color:white; }
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
-  gap: 14px;
-  padding: 14px;
+  display:grid;
+  grid-template-columns:1fr 1.2fr 1fr;
+  gap:20px;
+  padding:20px;
 }
 
 .panel {
-  background: #fff;
-  border: 1px solid #e6e8ef;
-  border-radius: 12px;
-  padding: 14px;
-  min-height: 260px;
+  background:white;
+  padding:15px;
+  border-radius:12px;
 }
-.panel.blue { border-left: 8px solid #2f6fed; }
-.panel.red  { border-left: 8px solid #ff4b4b; }
 
-.question { font-size: 28px; margin: 14px 0; }
-input { width: 100%; padding: 10px; font-size: 18px; }
-button { width: 100%; margin-top: 10px; padding: 10px; font-size: 16px; cursor: pointer; }
-.msg { margin-top: 10px; min-height: 22px; }
+.doubleKeypads {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.keypad {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+
+.keypad button {
+  padding:12px;
+  font-size:18px;
+}
 
 .arena {
-  background: #fff;
-  border: 1px solid #e6e8ef;
-  border-radius: 12px;
-  padding: 14px;
-  position: relative;
-  display: grid;
-  place-items: center;
+  text-align:center;
+  position:relative;
 }
-.line {
-  position: absolute;
-  left: 50%;
-  top: 14px;
-  bottom: 14px;
-  width: 2px;
-  background: #d9dce6;
+
+.ropeTrack {
+  position:relative;
+  height:20px;
+  margin:40px 0;
 }
-.rope {
-  width: 100%;
-  height: 10px;
-  background: #444;
-  border-radius: 999px;
-  position: relative;
-  margin-top: 40px;
+
+.ropeLine {
+  position:absolute;
+  width:100%;
+  height:8px;
+  background:black;
+  top:50%;
+  transform:translateY(-50%);
 }
-.marker {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #ffb000;
-  border: 2px solid #fff;
-  left: 50%;
+
+.knot {
+  position:absolute;
+  width:20px;
+  height:20px;
+  background:orange;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  transition:left 0.2s;
 }
-.winner { margin-top: 18px; font-size: 20px; font-weight: 700; }
+
+.players {
+  display:flex;
+  justify-content:space-between;
+}
+
+.player {
+  width:40px;
+  height:60px;
+  border-radius:10px;
+}
+
+.blueP { background:#2563eb; }
+.orangeP { background:#f97316; }
+
+.countdownOverlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.countdownOverlay.show {
+  display:flex;
+}
+
+.countdownText {
+  font-size:100px;
+  color:white;
+  font-weight:900;
+  animation:pop 0.7s;
+}
+
+@keyframes pop {
+  0%{transform:scale(0.5);opacity:0;}
+  50%{transform:scale(1.2);}
+  100%{transform:scale(1);opacity:1;}
+}
+
+.winner {
+  font-size:24px;
+  font-weight:900;
+  margin-top:20px;
+}
