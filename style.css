@@ -107,6 +107,15 @@ button {
   gap:56px;
   pointer-events:none;
   z-index:2;
+  transition:transform 0.22s ease;
+}
+
+.midPullers[data-pull="left"] {
+  transform:translateX(-14px);
+}
+
+.midPullers[data-pull="right"] {
+  transform:translateX(14px);
 }
 
 .midPerson {
@@ -197,6 +206,136 @@ button {
 .midPerson.right .armFront { transform:rotate(55deg); }
 .midPerson.right .legBack { transform:rotate(-24deg); }
 .midPerson.right .legFront { transform:rotate(18deg); }
+
+.midPerson.is-pulling {
+  animation:tugBody 0.45s ease-in-out infinite;
+}
+
+.midPerson.is-pulling .armBack,
+.midPerson.is-pulling .armFront {
+  animation:tugArm 0.45s ease-in-out infinite;
+}
+
+.midPerson.is-pulling .legBack,
+.midPerson.is-pulling .legFront {
+  animation:tugLeg 0.45s ease-in-out infinite;
+}
+
+.midPerson.winning {
+  filter:drop-shadow(0 0 8px rgba(22,163,74,0.6));
+}
+
+@keyframes tugBody {
+  0%,
+  100% { transform:translateY(22px) translateX(0) rotate(var(--base-rot)); }
+  50% { transform:translateY(20px) translateX(var(--tug-shift)) rotate(calc(var(--base-rot) + var(--tug-rot))); }
+}
+
+@keyframes tugArm {
+  0%,
+  100% { transform:rotate(var(--arm-start)); }
+  50% { transform:rotate(var(--arm-end)); }
+}
+
+@keyframes tugLeg {
+  0%,
+  100% { transform:rotate(var(--leg-start)); }
+  50% { transform:rotate(var(--leg-end)); }
+}
+
+.midPerson.left {
+  --base-rot:11deg;
+  --tug-rot:4deg;
+  --tug-shift:-5px;
+}
+
+.midPerson.left .armBack,
+.midPerson.left .armFront {
+  --arm-start:35deg;
+  --arm-end:-20deg;
+}
+
+.midPerson.left .armFront {
+  --arm-start:-55deg;
+  --arm-end:-95deg;
+}
+
+.midPerson.left .legBack,
+.midPerson.left .legFront {
+  --leg-start:24deg;
+  --leg-end:-8deg;
+}
+
+.midPerson.left .legFront {
+  --leg-start:-18deg;
+  --leg-end:18deg;
+}
+
+.midPerson.right {
+  --base-rot:-11deg;
+  --tug-rot:-4deg;
+  --tug-shift:5px;
+}
+
+.midPerson.right .armBack,
+.midPerson.right .armFront {
+  --arm-start:-35deg;
+  --arm-end:20deg;
+}
+
+.midPerson.right .armFront {
+  --arm-start:55deg;
+  --arm-end:95deg;
+}
+
+.midPerson.right .legBack,
+.midPerson.right .legFront {
+  --leg-start:-24deg;
+  --leg-end:8deg;
+}
+
+.midPerson.right .legFront {
+  --leg-start:18deg;
+  --leg-end:-18deg;
+}
+
+
+.pullers {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-top:-8px;
+  padding:0 18px;
+  pointer-events:none;
+}
+
+.team {
+  display:flex;
+  gap:10px;
+  transition:transform 0.25s ease, filter 0.2s ease;
+}
+
+.team.winning {
+  filter:drop-shadow(0 0 8px rgba(22,163,74,0.5));
+}
+
+
+.puller {
+  width:18px;
+  height:44px;
+  border:2px solid #171717;
+  border-radius:8px;
+  box-shadow:0 2px 3px rgba(0,0,0,0.2);
+}
+
+.teamLeft .puller {
+  transform:skewX(8deg);
+}
+
+.teamRight .puller {
+  transform:skewX(-8deg);
+}
+
 
 .players {
   display:flex;

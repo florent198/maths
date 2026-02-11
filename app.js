@@ -11,6 +11,11 @@ const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const overlay = document.getElementById("countdownOverlay");
 const overlayText = document.getElementById("countdownText");
+const midPullersEl = document.getElementById("midPullers");
+const midPersonLeftEl = document.getElementById("midPersonLeft");
+const midPersonRightEl = document.getElementById("midPersonRight");
+const teamLeftEl = document.getElementById("teamLeft");
+const teamRightEl = document.getElementById("teamRight");
 
 const answerFields = {
   1: a1El,
@@ -78,6 +83,7 @@ function endGame() {
   gameStarted = false;
   clearInterval(timerInterval);
   winnerEl.textContent = getWinnerText();
+  updatePullersState();
 }
 
 function startTimer() {
@@ -100,6 +106,40 @@ function updateRope() {
   let pos = 50 + tug * 8;
   pos = Math.max(10, Math.min(90, pos));
   knotEl.style.left = pos + "%";
+  updatePullersState();
+}
+
+function updateTeamProgress() {
+  if (!teamLeftEl || !teamRightEl) return;
+
+  const maxProgress = 68;
+  const scoreStep = 4;
+  const tugShift = Math.max(-18, Math.min(18, tug * 3));
+  const leftProgress = Math.min(maxProgress, score1 * scoreStep);
+  const rightProgress = Math.min(maxProgress, score2 * scoreStep);
+
+  teamLeftEl.style.transform = `translateX(${leftProgress + tugShift}px)`;
+  teamRightEl.style.transform = `translateX(${-rightProgress + tugShift}px)`;
+
+  teamLeftEl.classList.toggle("winning", tug < 0);
+  teamRightEl.classList.toggle("winning", tug > 0);
+  teamLeftEl.classList.toggle("is-pulling", gameStarted);
+  teamRightEl.classList.toggle("is-pulling", gameStarted);
+}
+
+function updatePullersState() {
+  if (!midPullersEl || !midPersonLeftEl || !midPersonRightEl) return;
+
+  const direction = tug === 0 ? "center" : tug > 0 ? "right" : "left";
+  midPullersEl.dataset.pull = direction;
+
+  midPersonLeftEl.classList.toggle("is-pulling", gameStarted);
+  midPersonRightEl.classList.toggle("is-pulling", gameStarted);
+
+  midPersonLeftEl.classList.toggle("winning", tug < 0);
+  midPersonRightEl.classList.toggle("winning", tug > 0);
+
+  updateTeamProgress();
 }
 
 function checkAnswer(team, value) {
@@ -214,6 +254,7 @@ startBtn.onclick = async () => {
   winnerEl.textContent = "";
   updateRope();
   gameStarted = true;
+  updatePullersState();
   newRound();
 
   if (document.getElementById("timedMode").checked) {
@@ -233,9 +274,11 @@ resetBtn.onclick = () => {
   winnerEl.textContent = "";
   clearBuffers();
   updateRope();
+  updatePullersState();
 };
 
 buildKeypads();
 clearBuffers();
 updateRope();
 timerEl.textContent = document.getElementById("roundSeconds").value;
+updatePullersState();
