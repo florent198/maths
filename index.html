@@ -1,54 +1,302 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tug of War - Maths</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header class="header">
-    <div class="title">TUG OF WAR: MATHEMATICS</div>
-    <div class="hud">
-      <div class="teamScore blue">Team 1: <span id="score1">0</span></div>
+const q1El = document.getElementById("q1");
+const q2El = document.getElementById("q2");
+const a1El = document.getElementById("a1");
+const a2El = document.getElementById("a2");
+const m1El = document.getElementById("m1");
+const m2El = document.getElementById("m2");
 
-      <div class="level">
-        Niveau: <span id="level">1</span>
-        <div class="modeRow">
-          <label class="modeToggle">
-            <input type="checkbox" id="timedMode" checked />
-            <span>Timer manche</span>
-          </label>
-          <select id="roundSeconds" class="seconds">
-            <option value="10">10s</option>
-            <option value="15" selected>15s</option>
-            <option value="20">20s</option>
-            <option value="30">30s</option>
-          </select>
-        </div>
-      </div>
+const knotEl = document.getElementById("knot");
+const ropeLineEl = document.getElementById("ropeLine");
+const teamLeftEl = document.getElementById("teamLeft");
+const teamRightEl = document.getElementById("teamRight");
 
-      <div class="teamScore red">Team 2: <span id="score2">0</span></div>
-      <button id="resetBtn" class="reset">Reset</button>
-    </div>
-  </header>
+const winnerEl = document.getElementById("winner");
+const score1El = document.getElementById("score1");
+const score2El = document.getElementById("score2");
+const streak1El = document.getElementById("streak1");
+const streak2El = document.getElementById("streak2");
+const levelEl = document.getElementById("level");
 
-  <main class="grid">
-    <!-- LEFT -->
-    <section class="panel blue">
-      <div class="panelHead">
-        <div class="teamName">Team 1</div>
-        <div class="streak">Série: <span id="streak1">0</span></div>
-      </div>
+const resetBtn = document.getElementById("resetBtn");
+const timerEl = document.getElementById("timer");
+const timerLabelEl = document.getElementById("timerLabel");
 
-      <div class="question" id="q1">5 + 5 = ?</div>
-      <input id="a1" class="answer" inputmode="numeric" placeholder="0" />
-      <div class="keypad" data-team="1"></div>
-      <div class="msg" id="m1"></div>
-    </section>
+const timedModeEl = document.getElementById("timedMode");
+const roundSecondsEl = document.getElementById("roundSeconds");
 
-    <!-- CENTER -->
-    <section class="arena">
-      <div class="topInfo
+let score1 = 0, score2 = 0;
+let streak1 = 0, streak2 = 0;
 
+let tug = 0;               // - vers Team 1, + vers Team 2
+const WIN_AT = 6;
 
+let level = 1;
+let totalCorrect = 0;
+
+const state = { q1: null, q2: null };
+
+// --------- Timer par manche (compte à rebours) ----------
+let roundRemaining = Number(roundSecondsEl.value);
+let timerTick = null;
+
+function setRoundRemaining(seconds) {
+  roundRemaining = seconds;
+  timerEl.textContent = roundRemaining;
+}
+
+function stopRoundTimer() {
+  if (timerTick) clearInterval(timerTick);
+  timerTick = null;
+}
+
+function startRoundTimer() {
+  stopRoundTimer();
+
+  if (!timedModeEl.checked) {
+    timerLabelEl.textContent = "Libre";
+    timerEl.textContent = "∞";
+    return;
+  }
+
+  timerLabelEl.textContent = "Manche";
+  setRoundRemaining(Number(roundSecondsEl.value));
+
+  timerTick = setInterval(() => {
+    if (isGameOver()) return;
+    roundRemaining -= 1;
+    timerEl.textContent = roundRemaining;
+
+    if (roundRemaining <= 0) {
+      // Manche perdue: on reset les séries et on relance une manche
+      streak1 = 0;
+      streak2 = 0;
+
+      // Option “neutre” : la corde revient légèrement vers le centre
+      if (tug > 0) tug -= 1;
+      else if (tug < 0) tug += 1;
+
+      badMsg(m1El, "⏱️ Trop tard");
+      badMsg(m2El, "⏱️ Trop tard");
+      updateUI();
+      newRound();
+    }
+  }, 1000);
+}
+
+roundSecondsEl.addEventListener("change", () => {
+  if (timedModeEl.checked) startRoundTimer();
+});
+timedModeEl.addEventListener("change", () => startRoundTimer());
+
+// --------- Génération difficulté progressive ----------
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function subtractionChance() {
+  return Math.min(0.60, 0.10 + (level - 1) * 0.07);
+}
+function maxNumber() {
+  const steps = [10, 15, 20, 30, 40, 60, 80, 100, 150, 200];
+  return steps[Math.min(level - 1, steps.length - 1)];
+}
+function makeProblem() {
+  const max = maxNumber();
+  const useSub = Math.random() < subtractionChance();
+
+  if (!useSub) {
+    const a = randInt(0, max);
+    const b = randInt(0, max);
+    return { a, b, op: "+", ans: a + b };
+  }
+
+  let a = randInt(0, max);
+  let b = randInt(0, max);
+  if (b > a) [a, b] = [b, a];
+  return { a, b, op: "-", ans: a - b };
+}
+
+function renderQuestions() {
+  q1El.textContent = `${state.q1.a} ${state.q1.op} ${state.q1.b} = ?`;
+  q2El.textContent = `${state.q2.a} ${state.q2.op} ${state.q2.b} = ?`;
+}
+
+function newRound() {
+  state.q1 = makeProblem();
+  state.q2 = makeProblem();
+
+  m1El.textContent = "";
+  m2El.textContent = "";
+  m1El.className = "msg";
+  m2El.className = "msg";
+
+  a1El.value = "";
+  a2El.value = "";
+  renderQuestions();
+  a1El.focus();
+
+  startRoundTimer();
+}
+
+function updateLevel() {
+  level = 1 + Math.floor(totalCorrect / 6);
+  levelEl.textContent = level;
+}
+
+function animatePull(side) {
+  teamLeftEl.classList.remove("pullLeft");
+  teamRightEl.classList.remove("pullRight");
+  if (side === "left") teamLeftEl.classList.add("pullLeft");
+  if (side === "right") teamRightEl.classList.add("pullRight");
+
+  // retire la classe après un court instant
+  setTimeout(() => {
+    teamLeftEl.classList.remove("pullLeft");
+    teamRightEl.classList.remove("pullRight");
+  }, 220);
+}
+
+function updateRope() {
+  // Position du noeud (knot)
+  const x = Math.max(10, Math.min(90, 50 + tug * 7));
+  knotEl.style.left = `${x}%`;
+
+  // Petit effet de translation sur la corde (visuel)
+  const ropeShift = (x - 50) * 0.12; // réduit
+  ropeLineEl.style.transform = `translateY(-50%) translateX(${ropeShift}px)`;
+}
+
+function updateUI() {
+  score1El.textContent = score1;
+  score2El.textContent = score2;
+  streak1El.textContent = streak1;
+  streak2El.textContent = streak2;
+  updateLevel();
+  updateRope();
+
+  if (tug <= -WIN_AT) winnerEl.textContent = "🏆 Team 1 gagne !";
+  else if (tug >= WIN_AT) winnerEl.textContent = "🏆 Team 2 gagne !";
+  else winnerEl.textContent = "";
+}
+
+function isGameOver() {
+  return tug <= -WIN_AT || tug >= WIN_AT;
+}
+
+function goodMsg(el, text) {
+  el.textContent = text;
+  el.className = "msg good";
+}
+function badMsg(el, text) {
+  el.textContent = text;
+  el.className = "msg bad";
+}
+
+function check(team) {
+  if (isGameOver()) return;
+
+  if (team === 1) {
+    const v = Number(a1El.value);
+    if (Number.isFinite(v) && v === state.q1.ans) {
+      goodMsg(m1El, "✅ Correct !");
+      score1 += 1;
+      streak1 += 1;
+      streak2 = 0;
+      tug -= 1;
+      totalCorrect += 1;
+      animatePull("left");
+      updateUI();
+      newRound();
+    } else {
+      badMsg(m1El, "❌ Faux");
+      streak1 = 0;
+      updateUI();
+      a1El.select();
+    }
+  }
+
+  if (team === 2) {
+    const v = Number(a2El.value);
+    if (Number.isFinite(v) && v === state.q2.ans) {
+      goodMsg(m2El, "✅ Correct !");
+      score2 += 1;
+      streak2 += 1;
+      streak1 = 0;
+      tug += 1;
+      totalCorrect += 1;
+      animatePull("right");
+      updateUI();
+      newRound();
+    } else {
+      badMsg(m2El, "❌ Faux");
+      streak2 = 0;
+      updateUI();
+      a2El.select();
+    }
+  }
+}
+
+// ------------------------
+// Pavé numérique tactile
+// ------------------------
+function buildKeypad(container, team) {
+  const keys = [
+    "1","2","3",
+    "4","5","6",
+    "7","8","9",
+    "CLR","0","DEL",
+    "OK"
+  ];
+
+  container.innerHTML = "";
+  keys.forEach(k => {
+    const btn = document.createElement("button");
+    btn.textContent = k;
+
+    if (k === "OK") {
+      btn.classList.add("action", "ok");
+      btn.style.gridColumn = "1 / -1";
+    } else if (k === "DEL") {
+      btn.classList.add("action", "del");
+    } else if (k === "CLR") {
+      btn.classList.add("action", "clr");
+    }
+
+    btn.addEventListener("click", () => {
+      const input = team === 1 ? a1El : a2El;
+      if (isGameOver()) return;
+
+      if (k === "OK") return check(team);
+      if (k === "DEL") { input.value = input.value.slice(0, -1); input.focus(); return; }
+      if (k === "CLR") { input.value = ""; input.focus(); return; }
+
+      input.value = (input.value === "0") ? k : (input.value + k);
+      input.focus();
+    });
+
+    container.appendChild(btn);
+  });
+}
+
+document.querySelectorAll(".keypad").forEach(kp => {
+  const team = Number(kp.getAttribute("data-team"));
+  buildKeypad(kp, team);
+});
+
+// Clavier
+a1El.addEventListener("keydown", (e) => { if (e.key === "Enter") check(1); });
+a2El.addEventListener("keydown", (e) => { if (e.key === "Enter") check(2); });
+
+resetBtn.addEventListener("click", () => {
+  stopRoundTimer();
+  score1 = 0; score2 = 0;
+  streak1 = 0; streak2 = 0;
+  tug = 0;
+  level = 1;
+  totalCorrect = 0;
+  updateUI();
+  newRound();
+});
+
+// Init
+updateUI();
+newRound();
