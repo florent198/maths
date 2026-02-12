@@ -13,7 +13,7 @@ const overlay = document.getElementById("countdownOverlay");
 const overlayText = document.getElementById("countdownText");
 const teamLeftEl = document.getElementById("teamLeft");
 const teamRightEl = document.getElementById("teamRight");
-const arenaOffsetEl = document.getElementById("arenaOffset");
+const tugStageEl = document.getElementById("tugStage");
 
 const answerFields = {
   1: a1El,
@@ -101,8 +101,8 @@ function startTimer() {
 }
 
 function renderTug(offsetPx) {
-  if (!arenaOffsetEl) return;
-  arenaOffsetEl.style.setProperty("--gameX", `${offsetPx}px`);
+  if (!tugStageEl) return;
+  tugStageEl.style.setProperty("--gameX", `${offsetPx}px`);
 }
 
 function updateRope() {

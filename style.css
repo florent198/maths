@@ -68,9 +68,7 @@ button {
 .arena {
   --ropeY:84px;
   --playerSize:120px;
-  --teamGap:10px;
-  --safePadding:26px;
-  --centerOffset:156px;
+  --teamGap:40px;
   --gameX:0px;
   --handAdjustY:4px;
   text-align:center;
@@ -105,22 +103,16 @@ button {
   opacity:0.9;
 }
 
-.ropeTrack {
-  position:absolute;
-  inset:0;
-  transform:translateX(var(--gameX));
-  transition:transform 0.25s ease;
-}
-
 .ropeLine {
   position:absolute;
-  width:86%;
-  left:7%;
-  height:5px;
-  background:#111827;
-  border-radius:999px;
-  top:var(--ropeY);
-  transform:translateY(-50%);
+  left:50%;
+  top:78px;
+  transform:translateX(calc(-50% + var(--gameX, 0px)));
+  width:760px;
+  height:8px;
+  background:#0d1520;
+  border-radius:6px;
+  transition:transform 0.25s ease;
 }
 
 .knot {
@@ -130,10 +122,10 @@ button {
   border-left:10px solid transparent;
   border-right:10px solid transparent;
   border-top:18px solid #ef4444;
-  top:var(--ropeY);
+  top:78px;
   left:50%;
-  transform:translate(-50%,-20%);
-  transition:top 0.2s;
+  transform:translate(calc(-50% + var(--gameX, 0px)),-20%);
+  transition:transform 0.25s ease;
   z-index:3;
 }
 
@@ -143,13 +135,19 @@ button {
   margin:20px 0;
   overflow:hidden;
   border-radius:12px;
+  padding:0 80px;
 }
 
-.arenaOffset {
-  position:relative;
-  width:100%;
-  height:100%;
+.tugStage {
+  position:absolute;
+  left:50%;
+  top:8px;
+  transform:translateX(-50%);
+  width:min(900px, 100%);
+  height:180px;
   --gameX:0px;
+  pointer-events:none;
+  z-index:5;
 }
 
 .midPullers {
@@ -374,22 +372,21 @@ button {
 }
 
 .tugTeam {
-  --baseX:0px;
   position:absolute;
-  top:calc(var(--ropeY) - (var(--playerSize) * 0.58) + var(--handAdjustY));
+  top:0;
   left:50%;
   display:flex;
   gap:var(--teamGap);
-  transform:translateX(calc(var(--baseX) + var(--gameX)));
+  align-items:center;
   transition:transform 0.25s ease, filter 0.2s ease;
 }
 
 .tugLeft {
-  --baseX:calc(-1 * (var(--centerOffset) + var(--safePadding)));
+  transform:translateX(calc(-520px + var(--gameX, 0px)));
 }
 
 .tugRight {
-  --baseX:calc(var(--centerOffset) + var(--safePadding));
+  transform:translateX(calc(240px + var(--gameX, 0px)));
 }
 
 .team {
