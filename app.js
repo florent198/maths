@@ -5,16 +5,14 @@ const a2El = document.getElementById("a2");
 const score1El = document.getElementById("score1");
 const score2El = document.getElementById("score2");
 const timerEl = document.getElementById("timer");
-const knotEl = document.getElementById("knot");
 const winnerEl = document.getElementById("winner");
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const overlay = document.getElementById("countdownOverlay");
 const overlayText = document.getElementById("countdownText");
+const tugStageEl = document.getElementById("tugStage");
 const teamLeftEl = document.getElementById("teamLeft");
 const teamRightEl = document.getElementById("teamRight");
-const tugStageEl = document.getElementById("tugStage");
-const tugRopeEl = document.getElementById("tugRope");
 
 const answerFields = {
   1: a1El,
@@ -33,6 +31,13 @@ let gameStarted = false;
 let timerInterval;
 let currentAnswer1 = 0,
   currentAnswer2 = 0;
+
+function enforceTeamComposition() {
+  if (!teamLeftEl || !teamRightEl) return;
+
+  teamLeftEl.innerHTML = '<div class="tugPlayer tugRed"></div><div class="tugPlayer tugRed"></div>';
+  teamRightEl.innerHTML = '<div class="tugPlayer tugBlue"></div><div class="tugPlayer tugBlue"></div>';
+}
 
 function randomInt(max) {
   return Math.floor(Math.random() * max);
@@ -102,18 +107,13 @@ function startTimer() {
 }
 
 function renderTug(offsetPx) {
-  if (!tugStageEl || !tugRopeEl || !knotEl || !teamLeftEl || !teamRightEl) return;
-
-  tugRopeEl.style.transform = `translateX(calc(-50% + ${offsetPx}px))`;
-  knotEl.style.transform = `translate(calc(-50% + ${offsetPx}px), -20%)`;
-  teamLeftEl.style.transform = `translateX(${offsetPx}px)`;
-  teamRightEl.style.transform = `translateX(${offsetPx}px)`;
+  if (!tugStageEl) return;
+  tugStageEl.style.setProperty("--gameX", `${offsetPx}px`);
 }
 
 function updateRope() {
   const tugOffset = Math.max(-72, Math.min(72, tug * 8));
   renderTug(tugOffset);
-  knotEl.style.left = "50%";
   updatePullersState();
 }
 
@@ -122,8 +122,6 @@ function updateTeamProgress() {
 
   teamLeftEl.classList.toggle("winning", tug < 0);
   teamRightEl.classList.toggle("winning", tug > 0);
-  teamLeftEl.classList.toggle("is-pulling", gameStarted);
-  teamRightEl.classList.toggle("is-pulling", gameStarted);
 }
 
 function updatePullersState() {
@@ -265,8 +263,9 @@ resetBtn.onclick = () => {
   updatePullersState();
 };
 
+enforceTeamComposition();
 buildKeypads();
 clearBuffers();
-updateRope();
+renderTug(0);
 timerEl.textContent = document.getElementById("roundSeconds").value;
 updatePullersState();
