@@ -14,6 +14,7 @@ const overlayText = document.getElementById("countdownText");
 const teamLeftEl = document.getElementById("teamLeft");
 const teamRightEl = document.getElementById("teamRight");
 const tugStageEl = document.getElementById("tugStage");
+const tugRopeEl = document.getElementById("tugRope");
 
 const answerFields = {
   1: a1El,
@@ -101,8 +102,12 @@ function startTimer() {
 }
 
 function renderTug(offsetPx) {
-  if (!tugStageEl) return;
-  tugStageEl.style.setProperty("--gameX", `${offsetPx}px`);
+  if (!tugStageEl || !tugRopeEl || !knotEl || !teamLeftEl || !teamRightEl) return;
+
+  tugRopeEl.style.transform = `translateX(calc(-50% + ${offsetPx}px))`;
+  knotEl.style.transform = `translate(calc(-50% + ${offsetPx}px), -20%)`;
+  teamLeftEl.style.transform = `translateX(${offsetPx}px)`;
+  teamRightEl.style.transform = `translateX(${offsetPx}px)`;
 }
 
 function updateRope() {
