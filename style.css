@@ -106,14 +106,14 @@ button {
 .ropeLine {
   position:absolute;
   left:50%;
-  top:78px;
-  transform:translateX(calc(-50% + var(--gameX, 0px)));
+  top:84px;
+  transform:translateX(-50%);
   width:760px;
   height:8px;
   background:#0d1520;
   border-radius:6px;
   transition:transform 0.25s ease;
-  z-index:5;
+  z-index:1;
 }
 
 .knot {
@@ -123,9 +123,9 @@ button {
   border-left:10px solid transparent;
   border-right:10px solid transparent;
   border-top:18px solid #ef4444;
-  top:78px;
+  top:84px;
   left:50%;
-  transform:translate(calc(-50% + var(--gameX, 0px)),-20%);
+  transform:translate(-50%,-20%);
   transition:transform 0.25s ease;
   z-index:3;
 }
@@ -372,22 +372,20 @@ button {
 
 .tugTeam {
   position:absolute;
-  top:40px;
+  top:85px;
   display:flex;
-  gap:var(--teamGap);
+  gap:36px;
   align-items:center;
   transition:transform 0.25s ease, filter 0.2s ease;
-  z-index:20;
+  z-index:2;
 }
 
 .tugLeft {
   left:80px;
-  transform:translateX(var(--gameX, 0px));
 }
 
 .tugRight {
   right:80px;
-  transform:translateX(var(--gameX, 0px));
 }
 
 .team {
@@ -399,17 +397,9 @@ button {
 }
 
 
-.tugPlayerWrap,
-.player-wrap {
-  width:max(80px, var(--playerSize));
-  height:max(80px, var(--playerSize));
-  z-index:20;
-}
-
-.tugPlayerSprite,
-.player-sprite {
-  width:max(80px, var(--playerSize));
-  height:max(80px, var(--playerSize));
+.tugPlayer {
+  width:120px;
+  height:120px;
   display:block;
   opacity:1;
   visibility:visible;
@@ -434,18 +424,15 @@ button {
 /* DEBUG (désactivable): décommentez pour visualiser les boîtes joueurs. */
 /* .tugPlayer, .player, .tugPlayerSprite { outline: 2px solid red; } */
 
-.tugBlue,
-.player-blue {
+.tugBlue {
   background-image:url("./joueurbleu.png");
 }
 
-.tugRed,
-.player-red {
+.tugRed {
   background-image:url("./joueurrouge.png");
 }
 
-.team.is-pulling .tugPlayerSprite,
-.team.is-pulling .player-sprite {
+.team.is-pulling .tugPlayer {
   animation:effortBounce 0.45s ease-in-out infinite;
 }
 
@@ -455,8 +442,7 @@ button {
   50% { transform:translateY(2px) rotate(1deg); }
 }
 
-.team .tugPlayerWrap:nth-child(2) .tugPlayerSprite,
-.team .player-wrap:nth-child(2) .player-sprite {
+.team .tugPlayer:nth-child(2) {
   animation-delay:0.12s;
 }
 
