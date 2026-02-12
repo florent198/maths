@@ -32,11 +32,17 @@ let timerInterval;
 let currentAnswer1 = 0,
   currentAnswer2 = 0;
 
+const PLAYERS_PER_TEAM = 2;
+
+function buildTeamPlayers(playerClass) {
+  return Array.from({ length: PLAYERS_PER_TEAM }, () => `<div class="tugPlayer ${playerClass}"></div>`).join("");
+}
+
 function enforceTeamComposition() {
   if (!teamLeftEl || !teamRightEl) return;
 
-  teamLeftEl.innerHTML = '<div class="tugPlayer tugRed"></div><div class="tugPlayer tugRed"></div>';
-  teamRightEl.innerHTML = '<div class="tugPlayer tugBlue"></div><div class="tugPlayer tugBlue"></div>';
+  teamLeftEl.innerHTML = buildTeamPlayers("tugRed");
+  teamRightEl.innerHTML = buildTeamPlayers("tugBlue");
 }
 
 function randomInt(max) {
@@ -231,6 +237,7 @@ async function countdown() {
 
 startBtn.onclick = async () => {
   if (gameStarted) return;
+  enforceTeamComposition();
   await countdown();
   score1 = 0;
   score2 = 0;
@@ -250,6 +257,7 @@ startBtn.onclick = async () => {
 
 resetBtn.onclick = () => {
   gameStarted = false;
+  enforceTeamComposition();
   clearInterval(timerInterval);
   score1 = 0;
   score2 = 0;
