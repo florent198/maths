@@ -113,6 +113,7 @@ button {
   background:#0d1520;
   border-radius:6px;
   transition:transform 0.25s ease;
+  z-index:5;
 }
 
 .knot {
@@ -131,23 +132,21 @@ button {
 
 .tugScene {
   position:relative;
-  height:170px;
+  height:220px;
   margin:20px 0;
-  overflow:hidden;
+  overflow:visible;
   border-radius:12px;
-  padding:0 80px;
+  padding:0;
 }
 
 .tugStage {
-  position:absolute;
-  left:50%;
-  top:8px;
-  transform:translateX(-50%);
-  width:min(900px, 100%);
-  height:180px;
+  position:relative;
+  width:100%;
+  height:220px;
+  margin-top:40px;
   --gameX:0px;
   pointer-events:none;
-  z-index:5;
+  z-index:10;
 }
 
 .midPullers {
@@ -373,20 +372,22 @@ button {
 
 .tugTeam {
   position:absolute;
-  top:0;
-  left:50%;
+  top:40px;
   display:flex;
   gap:var(--teamGap);
   align-items:center;
   transition:transform 0.25s ease, filter 0.2s ease;
+  z-index:20;
 }
 
 .tugLeft {
-  transform:translateX(calc(-520px + var(--gameX, 0px)));
+  left:80px;
+  transform:translateX(var(--gameX, 0px));
 }
 
 .tugRight {
-  transform:translateX(calc(240px + var(--gameX, 0px)));
+  right:80px;
+  transform:translateX(var(--gameX, 0px));
 }
 
 .team {
@@ -400,14 +401,18 @@ button {
 
 .tugPlayerWrap,
 .player-wrap {
-  width:var(--playerSize);
-  height:var(--playerSize);
+  width:max(80px, var(--playerSize));
+  height:max(80px, var(--playerSize));
+  z-index:20;
 }
 
 .tugPlayerSprite,
 .player-sprite {
-  width:var(--playerSize);
-  height:var(--playerSize);
+  width:max(80px, var(--playerSize));
+  height:max(80px, var(--playerSize));
+  display:block;
+  opacity:1;
+  visibility:visible;
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
@@ -426,10 +431,15 @@ button {
   color:#dc2626;
 }
 
+/* DEBUG (désactivable): décommentez pour visualiser les boîtes joueurs. */
+/* .tugPlayer, .player, .tugPlayerSprite { outline: 2px solid red; } */
+
+.tugBlue,
 .player-blue {
   background-image:url("./joueurbleu.png");
 }
 
+.tugRed,
 .player-red {
   background-image:url("./joueurrouge.png");
 }
