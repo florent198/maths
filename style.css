@@ -140,18 +140,21 @@ button {
   top: 40px;
   display: flex;
   gap: 36px;
+  width: 42%;
   align-items: center;
   z-index: 2;
   transition: transform 0.25s ease, filter 0.2s ease;
 }
 
 .tugLeft {
-  left: 120px;
+  left: 2%;
+  justify-content: flex-start;
   transform: translateX(var(--gameX, 0px));
 }
 
 .tugRight {
-  right: 120px;
+  right: 2%;
+  justify-content: flex-end;
   transform: translateX(var(--gameX, 0px));
 }
 
@@ -166,7 +169,6 @@ button {
   background-repeat: no-repeat;
   background-position: center;
   transform: none !important;
-  outline: 2px solid rgba(255, 0, 0, 0.4);
 }
 
 
