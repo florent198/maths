@@ -33,28 +33,128 @@ let currentAnswer1 = 0,
   currentAnswer2 = 0;
 
 const PLAYERS_PER_TEAM = 2;
-const CENTER_PLAYER_SEPARATION_PX = 28;
+const CENTER_GAP_PADDING_PX = 12;
+const SIDE_CASCADE_SPACING_PX = 30;
+const PLAYER_WIDTH_FALLBACK_PX = 80;
 
-function buildTeamPlayers(playerClass, centerPlayerIndex, centerOffsetClass) {
+function buildTeamPlayers(playerClass) {
   return Array.from({ length: PLAYERS_PER_TEAM }, (_, index) => {
     const classes = ["tugPlayer", playerClass];
-
-    if (index === centerPlayerIndex) {
-      classes.push(centerOffsetClass);
-    }
 
     return `<div class="${classes.join(" ")}"></div>`;
   }).join("");
 }
 
+function getPlayerCenterX(playerEl) {
+  const rect = playerEl.getBoundingClientRect();
+  return rect.left + rect.width / 2;
+}
+
+function setPlayerShift(playerEl, deltaX) {
+  const currentShift = Number.parseFloat(playerEl.dataset.shiftX || "0");
+  const nextShift = currentShift + deltaX;
+  playerEl.dataset.shiftX = `${nextShift}`;
+  playerEl.style.setProperty("--playerShiftX", `${nextShift}px`);
+}
+
+function resetPlayerShifts(players) {
+  players.forEach((playerEl) => {
+    playerEl.dataset.shiftX = "0";
+    playerEl.style.setProperty("--playerShiftX", "0px");
+  });
+}
+
+function resolveCenterPlayerGap() {
+  if (!tugStageEl || !teamLeftEl || !teamRightEl) return;
+
+  const redPlayers = Array.from(teamLeftEl.querySelectorAll(".tugRed"));
+  const bluePlayers = Array.from(teamRightEl.querySelectorAll(".tugBlue"));
+  const allPlayers = [...redPlayers, ...bluePlayers];
+
+  if (!redPlayers.length || !bluePlayers.length) return;
+
+  resetPlayerShifts(allPlayers);
+
+  const stageRect = tugStageEl.getBoundingClientRect();
+  const centerX = stageRect.left + stageRect.width / 2;
+
+  const redClosest = redPlayers
+    .filter((playerEl) => getPlayerCenterX(playerEl) < centerX)
+    .sort((a, b) => Math.abs(getPlayerCenterX(a) - centerX) - Math.abs(getPlayerCenterX(b) - centerX))[0];
+  const blueClosest = bluePlayers
+    .filter((playerEl) => getPlayerCenterX(playerEl) > centerX)
+    .sort((a, b) => Math.abs(getPlayerCenterX(a) - centerX) - Math.abs(getPlayerCenterX(b) - centerX))[0];
+
+  if (!redClosest || !blueClosest) return;
+
+  const redWidth = redClosest.getBoundingClientRect().width || PLAYER_WIDTH_FALLBACK_PX;
+  const blueWidth = blueClosest.getBoundingClientRect().width || PLAYER_WIDTH_FALLBACK_PX;
+
+  // minGapPx keeps red/blue closest players' bounding boxes separated around the center line.
+  const minGapPx = redWidth / 2 + blueWidth / 2 + CENTER_GAP_PADDING_PX;
+
+  const redCenterX = getPlayerCenterX(redClosest);
+  const blueCenterX = getPlayerCenterX(blueClosest);
+  const redTargetX = Math.min(redCenterX, centerX - minGapPx / 2);
+  const blueTargetX = Math.max(blueCenterX, centerX + minGapPx / 2);
+
+  setPlayerShift(redClosest, redTargetX - redCenterX);
+  setPlayerShift(blueClosest, blueTargetX - blueCenterX);
+
+  const redOrdered = [...redPlayers].sort((a, b) => getPlayerCenterX(b) - getPlayerCenterX(a));
+  for (let i = 0; i < redOrdered.length - 1; i++) {
+    const nearCenter = redOrdered[i].getBoundingClientRect();
+    const fartherLeftPlayer = redOrdered[i + 1];
+    const fartherLeftRect = fartherLeftPlayer.getBoundingClientRect();
+    const gap = nearCenter.left - fartherLeftRect.right;
+    if (gap < SIDE_CASCADE_SPACING_PX) {
+      setPlayerShift(fartherLeftPlayer, -(SIDE_CASCADE_SPACING_PX - gap));
+    }
+  }
+
+  const blueOrdered = [...bluePlayers].sort((a, b) => getPlayerCenterX(a) - getPlayerCenterX(b));
+  for (let i = 0; i < blueOrdered.length - 1; i++) {
+    const nearCenter = blueOrdered[i].getBoundingClientRect();
+    const fartherRightPlayer = blueOrdered[i + 1];
+    const fartherRightRect = fartherRightPlayer.getBoundingClientRect();
+    const gap = fartherRightRect.left - nearCenter.right;
+    if (gap < SIDE_CASCADE_SPACING_PX) {
+      setPlayerShift(fartherRightPlayer, SIDE_CASCADE_SPACING_PX - gap);
+    }
+  }
+
+  redPlayers.forEach((playerEl) => {
+    const center = getPlayerCenterX(playerEl);
+    if (center >= centerX) {
+      setPlayerShift(playerEl, -(center - centerX + 1));
+    }
+  });
+
+  bluePlayers.forEach((playerEl) => {
+    const center = getPlayerCenterX(playerEl);
+    if (center <= centerX) {
+      setPlayerShift(playerEl, centerX - center + 1);
+    }
+  });
+
+  const redRect = redClosest.getBoundingClientRect();
+  const blueRect = blueClosest.getBoundingClientRect();
+  const noOverlap = redRect.right <= blueRect.left;
+  console.info("[tug-layout] center pair check", {
+    centerX,
+    minGapPx,
+    red: { left: redRect.left, right: redRect.right },
+    blue: { left: blueRect.left, right: blueRect.right },
+    noOverlap,
+  });
+}
+
 function enforceTeamComposition() {
   if (!teamLeftEl || !teamRightEl) return;
 
-  // Keep center line clear: pull the nearest red player left and nearest blue player right.
-  teamLeftEl.innerHTML = buildTeamPlayers("tugRed", PLAYERS_PER_TEAM - 1, "tugCenterRed");
-  teamRightEl.innerHTML = buildTeamPlayers("tugBlue", 0, "tugCenterBlue");
-
-  tugStageEl?.style.setProperty("--centerSeparationPx", `${CENTER_PLAYER_SEPARATION_PX}px`);
+  teamLeftEl.innerHTML = buildTeamPlayers("tugRed");
+  teamRightEl.innerHTML = buildTeamPlayers("tugBlue");
+  resolveCenterPlayerGap();
 }
 
 function randomInt(max) {
@@ -144,6 +244,7 @@ function updateTeamProgress() {
 
 function updatePullersState() {
   updateTeamProgress();
+  resolveCenterPlayerGap();
 }
 
 function checkAnswer(team, value) {
@@ -289,3 +390,5 @@ clearBuffers();
 renderTug(0);
 timerEl.textContent = document.getElementById("roundSeconds").value;
 updatePullersState();
+
+window.addEventListener("resize", resolveCenterPlayerGap);
