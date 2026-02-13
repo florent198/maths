@@ -33,16 +33,28 @@ let currentAnswer1 = 0,
   currentAnswer2 = 0;
 
 const PLAYERS_PER_TEAM = 2;
+const CENTER_PLAYER_SEPARATION_PX = 28;
 
-function buildTeamPlayers(playerClass) {
-  return Array.from({ length: PLAYERS_PER_TEAM }, () => `<div class="tugPlayer ${playerClass}"></div>`).join("");
+function buildTeamPlayers(playerClass, centerPlayerIndex, centerOffsetClass) {
+  return Array.from({ length: PLAYERS_PER_TEAM }, (_, index) => {
+    const classes = ["tugPlayer", playerClass];
+
+    if (index === centerPlayerIndex) {
+      classes.push(centerOffsetClass);
+    }
+
+    return `<div class="${classes.join(" ")}"></div>`;
+  }).join("");
 }
 
 function enforceTeamComposition() {
   if (!teamLeftEl || !teamRightEl) return;
 
-  teamLeftEl.innerHTML = buildTeamPlayers("tugRed");
-  teamRightEl.innerHTML = buildTeamPlayers("tugBlue");
+  // Keep center line clear: pull the nearest red player left and nearest blue player right.
+  teamLeftEl.innerHTML = buildTeamPlayers("tugRed", PLAYERS_PER_TEAM - 1, "tugCenterRed");
+  teamRightEl.innerHTML = buildTeamPlayers("tugBlue", 0, "tugCenterBlue");
+
+  tugStageEl?.style.setProperty("--centerSeparationPx", `${CENTER_PLAYER_SEPARATION_PX}px`);
 }
 
 function randomInt(max) {

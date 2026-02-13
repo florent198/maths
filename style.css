@@ -121,6 +121,7 @@ button {
   overflow: visible;
   z-index: 5;
   --gameX: 0px;
+  --centerSeparationPx: 28px;
 }
 
 #tugRope {
@@ -179,6 +180,19 @@ button {
 
 .tugTeam .tugPlayer {
   flex: 0 0 auto;
+}
+
+.tugCenterRed,
+.tugCenterBlue {
+  position: relative;
+}
+
+.tugCenterRed {
+  left: calc(var(--centerSeparationPx, 0px) * -1);
+}
+
+.tugCenterBlue {
+  left: var(--centerSeparationPx, 0px);
 }
 
 .tugRed {
