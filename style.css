@@ -166,10 +166,12 @@ button {
 .tugPlayer {
   width: 140px;
   height: 140px;
+  position: relative;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  transform: none !important;
+  --playerShiftX: 0px;
+  transform: translateX(var(--playerShiftX)) !important;
 }
 
 
@@ -182,25 +184,14 @@ button {
   flex: 0 0 auto;
 }
 
-.tugCenterRed,
-.tugCenterBlue {
-  position: relative;
-}
-
-.tugCenterRed {
-  left: calc(var(--centerSeparationPx, 0px) * -1);
-}
-
-.tugCenterBlue {
-  left: var(--centerSeparationPx, 0px);
-}
-
 .tugRed {
   background-image: url("./joueurrouge.png");
+  z-index: 3;
 }
 
 .tugBlue {
   background-image: url("./joueurbleu.png");
+  z-index: 3;
 }
 
 .teamScore.blue,
